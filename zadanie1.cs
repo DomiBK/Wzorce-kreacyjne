@@ -1,79 +1,149 @@
-namespace RefactoringGuru
+using System;
+
+// Fabryka Metoda Wytwórcza
+public interface IProductFactory
 {
-    
-    abstract class Creator
+    Product CreateProduct();
+}
+
+public class CakeFactory : IProductFactory
+{
+    public Product CreateProduct()
     {
-        
-        public abstract IProduct FactoryMethod();
+        return new Cake();
+    }
+}
 
-        public string SomeOperation()
-        {
-            
-            var product = FactoryMethod();
-            
-            var result = "Creator: The same creator's code has just worked with "
-                + product.Operation();
+public class BreadFactory : IProductFactory
+{
+    public Product CreateProduct()
+    {
+        return new Bread();
+    }
+}
 
-            return result;
-        }
+// Produkt
+public abstract class Product
+{
+    public abstract string Name { get; }
+}
+
+public class Cake : Product
+{
+    public override string Name => "Cake";
+}
+
+public class Bread : Product
+{
+    public override string Name => "Bread";
+}
+
+// Fabryka Abstrakcyjna
+public interface IMeubleFactory
+{
+    IMeuble CreateMeuble();
+}
+
+public class ModernMeubleFactory : IMeubleFactory
+{
+    public IMeuble CreateMeuble()
+    {
+        return new ModernChair() { Style = "Modern" };
+    }
+}
+
+public class ClassicMeubleFactory : IMeubleFactory
+{
+    public IMeuble CreateMeuble()
+    {
+        return new ClassicChair() { Style = "Classic" };
+    }
+}
+
+// Zestaw Mebli
+public interface IMeubleSet
+{
+    string Name { get; }
+}
+
+public class ModernChair : IMeuble
+{
+    public string Style { get; set; }
+}
+
+public class ClassicChair : IMeuble
+{
+    public string Style { get; set; }
+}
+
+// Budowniczy
+public interface IHouseBuilder
+{
+    void BuildWalls();
+    void BuildRoof();
+    void BuildWindows();
+    House GetHouse();
+}
+
+public class ConcreteHouseBuilder : IHouseBuilder
+{
+    private House _house = new House();
+
+    public void BuildWalls()
+    {
+        _house.Walls = "Concrete walls";
     }
 
-    
-    class ConcreteCreator1 : Creator
+    public void BuildRoof()
     {
-        
-        public override IProduct FactoryMethod()
-        {
-            return new ConcreteProduct1();
-        }
+        _house.Roof = "Concrete roof";
     }
 
-   
-
-    
-    public interface IProduct
+    public void BuildWindows()
     {
-        string Operation();
+        _house.Windows = "Concrete windows";
     }
 
-    
-    class ConcreteProduct1 : IProduct
+    public House GetHouse()
     {
-        public string Operation()
-        {
-            return "{wypiek}";
-        }
+        return _house;
     }
+}
 
-  
+public class House
+{
+    public string Walls { get; set; }
+    public string Roof { get; set; }
+    public string Windows { get; set; }
+}
 
-    class Client
+// Prototyp
+public abstract class Document
+{
+    public virtual string Content { get; set; }
+}
+
+public class CV : Document
+{
+    public override string Content => "CV content";
+}
+
+// Singleton
+public sealed class President
+{
+    private static President _instance;
+
+    private President() {}
+
+    public static President Instance
     {
-        public void Main()
+        get
         {
-            Console.WriteLine("App: Launched with the ConcreteCreator1.");
-            ClientCode(new ConcreteCreator1());
-
-            Console.WriteLine("");
-
-            
-        }
-
-       
-        public void ClientCode(Creator creator)
-        {
-            
-            Console.WriteLine("Client: I'm not aware of the creator's class," +
-                "but it still works.\n" + creator.SomeOperation());
-            
-        }
-    }
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            new Client().Main();
+            if (_instance == null)
+            {
+                _instance = new President();
+            }
+            return _instance;
         }
     }
 }
